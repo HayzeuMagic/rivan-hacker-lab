@@ -2,8 +2,13 @@ import './globals.css'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Security+ Red Team Labs',
-  description: 'Browser-only CompTIA Security+ red-team training simulations',
+  title: 'Rivan Cybersecurity Institute — Cybersecurity Training Lab',
+  description: 'Authorized cybersecurity training in an isolated lab environment.',
+  openGraph: {
+    title: 'Rivan Cybersecurity Institute — Cybersecurity Training Lab',
+    description: 'Hands-on security training in an isolated, authorized environment.',
+    type: 'website',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

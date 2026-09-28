@@ -1,80 +1,74 @@
-# Northstar Logistics Cyberlab Documentation
+# Rivan Cybersecurity Institute Lab Documentation
 
-Northstar Logistics is an isolated, authorized security training lab focused on practical web and network exploitation patterns in a controlled environment.
+This folder is the authoritative learner documentation for this repository.
 
-## Architecture overview
-- Framework: Next.js App Router (frontend + route-handler APIs)
-- State: in-memory per-challenge session/progress stores
-- Targets:
-  - `hr.internal.lab` → Employee HR Portal
-  - `portal.internal.lab` → Operations Portal
-  - `scanner.internal.lab` → URL Inspection Service
-- Internal objective service (for SSRF lab): `internal-admin.internal.lab` (backend-internal route boundary)
+IMPORTANT:
+- This documentation is written for complete beginners.
+- Every workflow in these guides was verified against the running application.
+- Only Challenges 1–3 are active.
 
-## Active challenges
-Only these challenges are implemented and exposed:
-1. Broken Access Control / IDOR
-2. Authentication & Session Security
-3. SSRF & Internal Service Discovery
+## Start Here
 
-Challenges 4 and 5 are intentionally not exposed in the user-facing dashboard.
+1. Read the project entry guide: [../README.md](../README.md)
+2. Start the lab on `http://localhost:3005/`
+3. Complete challenges in order:
+   - [Challenge 1 — Broken Access Control / IDOR](challenge-01/README.md)
+   - [Challenge 2 — Authentication & Session Security](challenge-02/README.md)
+   - [Challenge 3 — SSRF & Internal Service Discovery](challenge-03/README.md)
 
-## Prerequisites
-- Node.js 20+ (tested on Node 22)
-- npm 10+
+## What is Implemented in This Repository
 
-## Start the complete lab
-```bash
-npm install
-npm run dev -- -p 3005
-```
+- Frontend: Next.js App Router (React + TypeScript)
+- Backend APIs: Next.js route handlers under `src/app/api`
+- Storage: in-memory session/progress state (`Map` objects)
+- Database: none
+- Docker / Docker Compose: not present
+- Required env file: none for local default run
 
-Open:
+## Verified Targets
+
+- `hr.internal.lab` → Employee HR Portal
+- `portal.internal.lab` → Internal Operations Portal
+- `scanner.internal.lab` → URL Inspection Service
+
+Internal service used by Challenge 3:
+- `internal-admin.internal.lab` (reachable through scanner flow)
+
+## Verified Local URLs
+
 - Dashboard: `http://localhost:3005/`
-- Challenge targets:
-  - `http://localhost:3005/targets/hr`
-  - `http://localhost:3005/targets/portal`
-  - `http://localhost:3005/targets/scanner`
+- Challenge 1 page: `http://localhost:3005/challenges/idor-broken-access-control`
+- Challenge 2 page: `http://localhost:3005/challenges/authentication-session-security`
+- Challenge 3 page: `http://localhost:3005/challenges/ssrf-internal-service-discovery`
+- HR target: `http://localhost:3005/targets/hr`
+- Portal target: `http://localhost:3005/targets/portal`
+- Scanner target: `http://localhost:3005/targets/scanner`
 
-## Optional hostname simulation
-Add hosts-file entries to map lab hostnames to localhost:
+## Optional Hostname Routing
+
+If your hosts file maps internal hostnames to `127.0.0.1`, these host-based routes work:
+
 ```text
-127.0.0.1 hr.internal.lab
-127.0.0.1 portal.internal.lab
-127.0.0.1 scanner.internal.lab
+http://hr.internal.lab:3005/
+http://portal.internal.lab:3005/
+http://scanner.internal.lab:3005/
 ```
-Then browse:
-- `http://hr.internal.lab:3005/`
-- `http://portal.internal.lab:3005/`
-- `http://scanner.internal.lab:3005/`
 
-## Network topology (logical)
-- Lab scope: `10.20.0.0/16` (training narrative)
-- Exposed app listener: localhost port `3005`
-- SSRF internal boundary: scanner route can request internal admin route server-side
+## Verified Reset Endpoints
 
-## Run quality checks
-```bash
+- Challenge 1 reset: `POST /api/hr/reset`
+- Challenge 2 reset: `POST /api/portal/reset`
+- Challenge 3 reset: `POST /api/scanner/reset`
+
+## Verification Commands
+
+Run from the project root:
+
+```text
 npm run typecheck
 npm run lint
 npm run build
 npm run test:e2e
 ```
 
-## Reset behavior
-Each challenge has an independent reset endpoint:
-- Challenge 01: `POST /api/hr/reset`
-- Challenge 02: `POST /api/portal/reset`
-- Challenge 03: `POST /api/scanner/reset`
-
-## Troubleshooting
-- App fails to start: run `npm install` again and retry.
-- `next` not recognized: dependencies were not installed in this workspace.
-- Target hostname not resolving: use `/targets/*` routes or update hosts file.
-- Session not maintained: verify browser cookies are enabled.
-- Challenge progress not updating: refresh challenge page; verify corresponding `/api/*/api/progress` endpoint.
-
-## Challenge guides
-- [Challenge 01](challenge-01/README.md)
-- [Challenge 02](challenge-02/README.md)
-- [Challenge 03](challenge-03/README.md)
+All commands above passed during documentation QA.

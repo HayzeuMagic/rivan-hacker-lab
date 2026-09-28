@@ -1,99 +1,232 @@
-# Challenge 01 — Broken Access Control / IDOR
+# Challenge 1 — Broken Access Control / IDOR
 
-## 1. Objective
-Demonstrate that a logged-in low-privilege user can access another employee’s record by changing the object identifier (`id`) in an HR API request.
+## What You Will Learn
 
-## 2. Target
-`hr.internal.lab`
+In simple terms:
 
-## 3. Application
-Employee HR Portal used for internal directory/profile lookups.
+- An **ID** is a number used to request a specific record (example: employee `1001`).
+- **Authentication** means “you are logged in.”
+- **Authorization** means “you are allowed to view this specific record.”
 
-## 4. Learning objectives
-- HTTP request/response analysis
-- Authentication vs authorization
-- IDOR (Insecure Direct Object Reference)
+This challenge demonstrates an IDOR issue:
+- You log in as one user.
+- You change an employee ID value.
+- The server incorrectly returns another employee’s data.
 
-## 5. Prerequisites
-- Node.js and npm installed
-- Project dependencies installed
-- Local hosts mapping configured (for hostname simulation)
+## Before You Start
 
-## 6. Starting the lab
-```bash
-npm install
-npm run dev -- -p 3005
+1. Make sure the lab is running on `http://localhost:3005`.
+2. Keep the PowerShell window open where `npm run dev` is running.
+3. Open your browser.
+
+IMPORTANT:
+- Do not close the running lab terminal.
+- If you stop the server, pages and API calls will fail.
+
+## Step 1 — Open the Challenge Page
+
+1. Open your browser.
+2. Click the address bar.
+3. Enter:
+
+```text
+http://localhost:3005/challenges/idor-broken-access-control
 ```
 
-## 7. Verify the target
-- Browser: open `http://localhost:3005/targets/hr`
-- Optional hostname mode (after hosts file mapping): open `http://hr.internal.lab:3005/`
+4. Press Enter.
 
-## 8. Challenge walkthrough
-1) Login using the target page (`/targets/hr`):
-- Email: `analyst@northstar.internal`
-- Password: `northstar-analyst`
+What You Should See:
+- A dark page titled **Broken Access Control / IDOR**.
+- A button labeled **Open target**.
+- A button labeled **Reset lab**.
+- An **Evidence** panel.
 
-2) Request your own employee record:
-- Method: `GET`
-- Endpoint: `/api/hr/api/employees?id=1001`
-- Headers: browser session cookie (`hr_session`) after login
-- Expected: `200` + employee `1001`
+## Step 2 — Open the HR Target
 
-3) Test object authorization by changing ID:
-- Method: `GET`
-- Endpoint: `/api/hr/api/employees?id=1002`
-- Expected: `200` + unauthorized employee data (intentional vulnerability)
+1. On the challenge page, click **Open target**.
+2. A new tab opens to the HR app.
 
-4) Retrieve restricted briefing:
-- Method: `GET`
-- Endpoint: `/api/hr/api/restricted-briefing`
-- Expected: `200` + flag payload
+Direct URL (same page):
 
-5) Submit completion flag from challenge page:
-- Method: `POST`
-- Endpoint: `/api/hr/submit`
-- Body:
+```text
+http://localhost:3005/targets/hr
+```
+
+What You Should See:
+- Header text **Employee HR Portal**.
+- Right panel section **Employee sign-in**.
+- Input labels **Email address** and **Password**.
+- Main section **Employee directory** with **Employee ID** input and **View profile** button.
+
+## Step 3 — Sign In with the Lab Account
+
+1. In **Email address**, enter:
+
+```text
+analyst@rivan.internal
+```
+
+2. In **Password**, enter:
+
+```text
+rivan-analyst
+```
+
+3. Click **Sign in**.
+
+What You Should See:
+- The response panel (dark JSON box) shows:
+
 ```json
-{"flag":"CYBERLAB{idor_broken_access_control}"}
+{"status":200,"authenticated":true}
 ```
-- Expected: `200` and `{ "accepted": true }`
 
-## 9. Why it works
-The server checks if the user is authenticated but intentionally fails to enforce object-level authorization for `id=1002`.
+If credentials are wrong, you will see:
 
-## 10. Completion condition
-- Unauthorized record is accessed
-- Correct flag is submitted
+```json
+{"status":401,"error":"Invalid email or password"}
+```
 
-## 11. How to verify completion
-- Open challenge page: `/challenges/idor-broken-access-control`
-- Evidence list shows all checks completed
-- UI shows challenge complete state
+## Step 4 — Request Your Own Record
 
-## 12. Resetting the challenge
-- Method: `POST`
-- Endpoint: `/api/hr/reset`
-- Expected: session and progress cleared
+1. In the **Employee ID** field, enter:
 
-## 13. Troubleshooting
-- Target does not resolve: use `/targets/hr` directly, or add host mapping.
-- Connection refused: ensure dev server is running on port `3005`.
-- API returns `500`: restart dev server and retry.
-- Session not maintained: confirm cookie support is enabled.
-- Challenge doesn’t complete: verify `/api/hr/api/restricted-briefing` succeeds before submit.
-- Reset doesn’t work: call `/api/hr/reset` again and refresh page.
-- Frontend cannot reach backend: verify same origin (`localhost:3005`).
+```text
+1001
+```
 
-## 14. Expected behavior
-- `id=1001` works after login.
-- `id=1002` incorrectly returns data (intentional IDOR).
-- Reset restores fresh state.
+2. Click **View profile**.
 
-## 15. Security lesson
-Authentication alone is not authorization. Every object access must be validated against the authenticated principal.
+What You Should See:
+- JSON with `status: 200` and employee record `id: "1001"`.
+- Example values include `Jordan Lee` and `Operations`.
 
-## 16. Developer notes
-- Backend route: `src/app/api/hr/[...path]/route.ts`
-- Progress endpoint: `/api/hr/api/progress`
-- Session cookie name: `hr_session`
+## Step 5 — Trigger the IDOR Condition
+
+1. Click inside **Employee ID**.
+2. Replace `1001` with:
+
+```text
+1002
+```
+
+3. Click **View profile**.
+
+What You Should See:
+- JSON with `status: 200`.
+- Record for employee `1002` (this is the vulnerability).
+- Response includes:
+	- `internalResource`: `/api/restricted-briefing`
+	- `flag`: `CYBERLAB{idor_broken_access_control}`
+
+## Step 6 — Submit the Flag in the Challenge Page
+
+1. Return to the challenge tab (`/challenges/idor-broken-access-control`).
+2. In the **Lab status** section, find the flag input (placeholder `CYBERLAB{...}`).
+3. Enter:
+
+```text
+CYBERLAB{idor_broken_access_control}
+```
+
+4. Click **Submit**.
+
+What You Should See:
+- Status message: **Flag accepted. Challenge complete.**
+- A green confirmation label: **Challenge complete**.
+
+If the flag is wrong, you should see:
+
+```text
+Restricted resource access required.
+```
+
+or
+
+```text
+Submission rejected.
+```
+
+## Step 7 — Verify Completion
+
+On the same challenge page, verify:
+
+1. Evidence count reaches `5/5`.
+2. Checkmarks appear for all objectives.
+3. Challenge status confirms completion.
+
+## How to Reset the Challenge
+
+1. On the challenge page, click **Reset lab**.
+
+What You Should See:
+- Status message changes to:
+
+```text
+Session cleared. Start a fresh investigation.
+```
+
+- Evidence resets back to incomplete.
+
+You can now solve it again from Step 2.
+
+## Verified API Endpoints (Reference)
+
+- Login: `POST /api/hr/api/login`
+- Employee lookup: `GET /api/hr/api/employees?id=...`
+- Progress: `GET /api/hr/api/progress`
+- Submit: `POST /api/hr/submit`
+- Reset: `POST /api/hr/reset`
+
+## Troubleshooting
+
+### Problem: Page does not load
+
+Fix:
+1. Verify dev server is running.
+2. Re-run:
+
+```text
+$env:PORT="3005"; npm run dev
+```
+
+3. Refresh the page.
+
+### Problem: `401` when viewing employee
+
+Cause:
+- You are not logged in yet.
+
+Fix:
+1. Go to **Employee sign-in**.
+2. Use the exact credentials from Step 3.
+3. Click **Sign in**.
+
+### Problem: No flag input appears on challenge page
+
+Cause:
+- You have not triggered the restricted briefing condition yet.
+
+Fix:
+1. In HR target, request employee ID `1002`.
+2. Return to challenge page.
+3. Wait 1–2 seconds for evidence refresh.
+
+### Problem: Challenge does not complete
+
+Fix:
+1. Confirm you submitted the exact flag:
+
+```text
+CYBERLAB{idor_broken_access_control}
+```
+
+2. If still stuck, click **Reset lab** and repeat steps carefully.
+
+## Challenge Complete
+
+You are finished when all are true:
+
+- Lab status says **Flag accepted. Challenge complete.**
+- Evidence panel shows all objectives completed.
+- Completion indicator is visible on the challenge page.

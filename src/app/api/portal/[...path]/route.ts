@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server'
 
 const sessionSecurityFlag = 'CYBERLAB{session_security_failure}'
 const accounts = new Map([
-  ['analyst@northstar.internal', { password: 'northstar-analyst', role: 'employee', employeeNumber: '1001' }],
-  ['operations-admin@northstar.internal', { password: 'northstar-operations', role: 'admin', employeeNumber: '2048' }],
+  ['analyst@rivan.internal', { password: 'rivan-analyst', role: 'employee', employeeNumber: '1001' }],
+  ['operations-admin@rivan.internal', { password: 'rivan-operations', role: 'admin', employeeNumber: '2048' }],
 ])
 const sessions = new Map<string, { email: string; role: string; submitted: boolean }>()
 const resetRequests = new Map<string, { token: string; used: boolean }>()
@@ -29,7 +29,7 @@ export async function GET(request: Request, context: PortalContext) {
   if (endpoint === '/api/progress') {
     return json({
       authenticated: Boolean(session),
-      recovery: resetRequests.has('operations-admin@northstar.internal'),
+      recovery: resetRequests.has('operations-admin@rivan.internal'),
       admin: session?.role === 'admin',
       submitted: Boolean(session?.submitted),
     })
@@ -37,7 +37,7 @@ export async function GET(request: Request, context: PortalContext) {
   if (endpoint === '/api/admin') {
     if (!session) return json({ error: 'authentication required' }, { status: 401 })
     if (session.role !== 'admin') return json({ error: 'insufficient privileges' }, { status: 403 })
-    return json({ title: 'Operations control room', message: 'Privileged logistics controls are available.', flag: sessionSecurityFlag })
+    return json({ title: 'Operations control room', message: 'Privileged cybersecurity controls are available.', flag: sessionSecurityFlag })
   }
   if (endpoint === '/api/account') {
     if (!session) return json({ error: 'authentication required' }, { status: 401 })
@@ -55,8 +55,8 @@ export async function POST(request: Request, context: PortalContext) {
   if (endpoint === '/reset') {
     if (cookie) sessions.delete(cookie)
     resetRequests.clear()
-    accounts.get('analyst@northstar.internal')!.password = 'northstar-analyst'
-    accounts.get('operations-admin@northstar.internal')!.password = 'northstar-operations'
+    accounts.get('analyst@rivan.internal')!.password = 'rivan-analyst'
+    accounts.get('operations-admin@rivan.internal')!.password = 'rivan-operations'
     const result = json({ reset: true })
     result.cookies.set('portal_session', '', { httpOnly: true, sameSite: 'lax', path: '/', maxAge: 0 })
     return result
@@ -72,7 +72,7 @@ export async function POST(request: Request, context: PortalContext) {
   if (endpoint === '/api/auth/recovery') {
     const email = String(body.email ?? '')
     const account = accounts.get(email)
-    if (account) resetRequests.set(email, { token: `northstar-${account.employeeNumber}`, used: false })
+    if (account) resetRequests.set(email, { token: `rivan-${account.employeeNumber}`, used: false })
     return json({ accepted: true })
   }
   if (endpoint === '/api/auth/reset') {

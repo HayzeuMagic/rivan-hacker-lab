@@ -90,7 +90,7 @@ test('challenge 1 API workflow, completion, reset', async () => {
     path: ['api', 'login'],
     method: 'POST',
     jar,
-    body: { email: 'analyst@northstar.internal', password: 'northstar-analyst' },
+    body: { email: 'analyst@rivan.internal', password: 'rivan-analyst' },
     url: 'http://localhost/api/hr/api/login',
   })
   assert.equal(res.status, 200)
@@ -126,7 +126,7 @@ test('challenge 2 API workflow with predictable recovery token and persisted sub
     path: ['api', 'auth', 'recovery'],
     method: 'POST',
     jar,
-    body: { email: 'operations-admin@northstar.internal' },
+    body: { email: 'operations-admin@rivan.internal' },
     url: 'http://localhost/api/portal/api/auth/recovery',
   })
   assert.equal(res.status, 200)
@@ -135,7 +135,7 @@ test('challenge 2 API workflow with predictable recovery token and persisted sub
     path: ['api', 'auth', 'reset'],
     method: 'POST',
     jar,
-    body: { email: 'operations-admin@northstar.internal', token: 'northstar-2048', newPassword: 'northstar-admin-lab' },
+    body: { email: 'operations-admin@rivan.internal', token: 'rivan-2048', newPassword: 'rivan-admin-lab' },
     url: 'http://localhost/api/portal/api/auth/reset',
   })
   assert.equal(res.status, 200)
@@ -144,7 +144,7 @@ test('challenge 2 API workflow with predictable recovery token and persisted sub
     path: ['api', 'auth', 'login'],
     method: 'POST',
     jar,
-    body: { email: 'operations-admin@northstar.internal', password: 'northstar-admin-lab' },
+    body: { email: 'operations-admin@rivan.internal', password: 'rivan-admin-lab' },
     url: 'http://localhost/api/portal/api/auth/login',
   })
   assert.equal(res.status, 200)

@@ -5,11 +5,11 @@ import { challengeCatalog } from '@/simulator/core/engine'
 
 function DashboardCard({ id, title, tags, status, target, service, available }: { id: string; title: string; tags: string[]; status: string; target: string; service: string; available: boolean }) {
   return (
-    <article className="border border-slate-800 bg-slate-900/70 p-5 transition hover:border-slate-600">
+    <article className="rounded-xl border border-slate-800 bg-slate-900/70 p-5 transition hover:border-slate-500 hover:bg-slate-900/90">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
           <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">{id}</p>
-          <h2 className="text-xl font-semibold text-white">{title}</h2>
+          <h2 className="text-lg font-semibold text-white sm:text-xl">{title}</h2>
           <p className="mt-1 text-sm text-slate-400">{service}</p>
         </div>
         <span className={`inline-flex items-center gap-1.5 border px-2 py-1 text-[10px] font-bold uppercase tracking-[0.16em] ${available ? 'border-emerald-400/30 text-emerald-300' : 'border-slate-700 text-slate-400'}`}>
@@ -29,7 +29,7 @@ function DashboardCard({ id, title, tags, status, target, service, available }: 
         ))}
       </div>
       <button
-        className={`inline-flex w-full items-center justify-center gap-2 border px-3 py-2 text-sm font-medium transition ${available ? 'border-emerald-400/50 bg-emerald-400 text-slate-950 hover:bg-emerald-300' : 'cursor-not-allowed border-slate-800 bg-slate-800 text-slate-500'}`}
+        className={`inline-flex w-full items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition ${available ? 'border-emerald-400/50 bg-emerald-400 text-slate-950 hover:bg-emerald-300' : 'cursor-not-allowed border-slate-800 bg-slate-800 text-slate-500'}`}
         disabled={!available}
         onClick={() => window.location.assign(`/challenges/${id}`)}
       >
@@ -46,11 +46,12 @@ export default function HomePage() {
     <main className="min-h-screen bg-[#080b12] px-5 py-8 text-slate-100 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
         <header className="mb-10 border-b border-slate-800 pb-7">
-          <div className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300"><Network size={15} /> CYBERLAB / authorized environment</div>
+          <div className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300"><Network size={15} /> Rivan Cybersecurity Institute / authorized environment</div>
           <div className="flex flex-wrap items-end justify-between gap-5">
             <div>
-              <h1 className="font-mono text-4xl font-bold tracking-tight text-white sm:text-6xl">Northstar Logistics</h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">Isolated corporate network for practical penetration-testing training. Enumerate services, test hypotheses, and document evidence inside the authorized lab.</p>
+              <h1 className="font-mono text-4xl font-bold tracking-tight text-white sm:text-6xl">Rivan Cybersecurity Institute</h1>
+              <p className="mt-2 text-sm font-medium uppercase tracking-[0.2em] text-cyan-300">Cybersecurity Training Lab</p>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">Hands-on security training in an isolated lab environment. Analyze web behavior, validate findings, and document evidence inside authorized scope.</p>
             </div>
             <div className="border border-slate-800 bg-slate-900/60 px-4 py-3 font-mono text-xs text-slate-300"><span className="text-slate-500">SCOPE</span> 10.20.0.0/16</div>
           </div>
@@ -62,7 +63,7 @@ export default function HomePage() {
           <div className="bg-[#0d121b] p-4"><p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Operator</p><p className="mt-2 font-mono text-sm text-slate-200">analyst / authorized</p></div>
         </section>
 
-        <div className="mb-4 flex items-end justify-between gap-4"><div><p className="text-[10px] uppercase tracking-[0.2em] text-slate-500">Target environment</p><h2 className="mt-1 text-2xl font-semibold text-white">Three-stage assessment</h2></div><p className="text-right text-xs text-slate-500">Each service is independently resettable.</p></div>
+        <div className="mb-4 flex items-end justify-between gap-4"><div><p className="text-[10px] uppercase tracking-[0.2em] text-slate-500">Target environment</p><h2 className="mt-1 text-2xl font-semibold text-white">Three-stage assessment</h2></div><p className="text-right text-xs text-slate-500">All challenge services are independently resettable.</p></div>
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {challengeCatalog.map((challenge) => (
             <DashboardCard

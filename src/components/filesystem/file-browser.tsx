@@ -3,7 +3,6 @@
 import type { SimFile, SimHost } from '@/types/simulator'
 
 function getFileItems(files: Record<string, SimFile>, currentPath: string) {
-  const prefix = currentPath.replace(/\\/g, '/').replace(/^C:/, 'C:').replace(/\/$/, '')
   return Object.values(files)
     .filter((file) => file.path.startsWith(currentPath) || file.path.includes(currentPath))
     .slice(0, 12)

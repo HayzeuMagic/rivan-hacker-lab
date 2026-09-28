@@ -49,3 +49,53 @@ body {
     linear-gradient(90deg, rgba(15, 118, 110, 0.05) 1px, transparent 1px);
   background-size: 18px 18px;
 }
+
+.lab-input-dark {
+  @apply w-full border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none;
+}
+
+.lab-input-dark::placeholder {
+  @apply text-slate-400;
+}
+
+.lab-input-dark:focus-visible {
+  @apply border-cyan-300 ring-2 ring-cyan-400/40;
+}
+
+.lab-input-dark:disabled {
+  @apply cursor-not-allowed border-slate-700 bg-slate-800 text-slate-500;
+}
+
+.lab-input-light {
+  @apply w-full border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none;
+}
+
+.lab-input-light::placeholder {
+  @apply text-slate-500;
+}
+
+.lab-input-light:focus-visible {
+  @apply border-teal-600 ring-2 ring-teal-500/30;
+}
+
+.lab-input-light:disabled {
+  @apply cursor-not-allowed border-slate-300 bg-slate-100 text-slate-500;
+}
+
+.lab-input-dark:-webkit-autofill,
+.lab-input-dark:-webkit-autofill:hover,
+.lab-input-dark:-webkit-autofill:focus {
+  -webkit-text-fill-color: #e2e8f0;
+  -webkit-box-shadow: 0 0 0px 1000px #0f172a inset;
+}
+
+.lab-input-light:-webkit-autofill,
+.lab-input-light:-webkit-autofill:hover,
+.lab-input-light:-webkit-autofill:focus {
+  -webkit-text-fill-color: #0f172a;
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+}
+
+.lab-selection::selection {
+  @apply bg-cyan-300/50 text-slate-950;
+}

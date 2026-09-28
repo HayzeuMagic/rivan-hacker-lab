@@ -165,7 +165,7 @@ export function createInitialCredentialVaultState(): SimulatorState {
     },
     objectives: [],
     terminalHistory: [
-      createTerminalLine('Security+ Red Team Labs // simulated environment', 'system'),
+      createTerminalLine('Rivan Cybersecurity Institute // simulated environment', 'system'),
       createTerminalLine('You are connected to WS-07 as analyst. All activity is simulated in the browser.', 'system'),
       createTerminalLine('Type help to see the available commands.', 'system'),
     ],

@@ -234,7 +234,7 @@ export function parseChallengeCommand(state: SimulatorState, command: string): C
       next.attackState.restrictedServerAccessed = true
       next.objectives = evaluateObjectives(next.enumeration, next.attackState, next.flagRetrieved)
       addLine('Authentication successful. Access granted.', 'success')
-      addLine('Enumerating 10.10.20.20 shares...', 'system')
+      addLine(`Enumerating ${target} shares...`, 'system')
       addLine('/finance/', 'output')
       addLine('/hr/', 'output')
       addLine('/admin/', 'output')

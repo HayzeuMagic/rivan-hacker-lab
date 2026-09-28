@@ -1,108 +1,268 @@
-# Challenge 02 — Authentication & Session Security
+# Challenge 2 — Authentication & Session Security
 
-## 1. Objective
-Abuse a predictable password-reset token to gain administrator access in the operations portal.
+## What You Will Learn
 
-## 2. Target
-`portal.internal.lab`
+This challenge teaches four key ideas:
 
-## 3. Application
-Operations Portal handling login, recovery, password reset, and admin controls.
+1. **Authentication**: proving who you are (login).
+2. **Session**: the server remembers login state using a cookie.
+3. **Password recovery**: how reset flows should work.
+4. **Vulnerability**: a predictable reset token can let an attacker reset an admin password.
 
-## 4. Learning objectives
-- HTTP authentication workflows
-- Session cookie behavior
-- Password-recovery weaknesses
+In this lab, the reset token follows a predictable format:
 
-## 5. Prerequisites
-- App running locally on port `3005`
-- Dependencies installed
-
-## 6. Starting the lab
-```bash
-npm install
-npm run dev -- -p 3005
+```text
+rivan-<employeeNumber>
 ```
 
-## 7. Verify the target
-- Browser: `http://localhost:3005/targets/portal`
-- Optional hostname mode: `http://portal.internal.lab:3005/`
+For the admin account, that token is:
 
-## 8. Challenge walkthrough
-1) Trigger recovery request:
-- Method: `POST`
-- Endpoint: `/api/portal/api/auth/recovery`
-- Body:
+```text
+rivan-2048
+```
+
+## Before You Start
+
+1. Confirm lab is running on `http://localhost:3005`.
+2. Keep the dev server terminal open.
+3. Open a browser.
+
+IMPORTANT:
+- This guide uses exact UI labels from the current app.
+- Enter values exactly as written.
+
+## Step 1 — Open the Challenge Page
+
+1. Open your browser.
+2. Go to:
+
+```text
+http://localhost:3005/challenges/authentication-session-security
+```
+
+What You Should See:
+- Page title **Authentication & Session Security**.
+- Button **Open target**.
+- Button **Reset lab**.
+- Evidence panel.
+
+## Step 2 — Open the Portal Target
+
+1. Click **Open target**.
+
+Direct URL (same page):
+
+```text
+http://localhost:3005/targets/portal
+```
+
+What You Should See:
+- Header **Internal Operations Portal**.
+- Section **Password recovery**.
+- Section **Reset password**.
+- Right panel **Portal sign-in**.
+- Button **Open operations control room**.
+
+## Step 3 — Trigger Password Recovery
+
+1. In section **Password recovery**, click field **Recovery email**.
+2. Enter:
+
+```text
+operations-admin@rivan.internal
+```
+
+3. Click **Request**.
+
+What You Should See:
+- JSON response panel contains:
+
 ```json
-{"email":"operations-admin@northstar.internal"}
+{"status":200,"accepted":true}
 ```
-- Expected: `200` + generic acceptance response
 
-2) Reset password using predictable token:
-- Method: `POST`
-- Endpoint: `/api/portal/api/auth/reset`
-- Body:
+## Step 4 — Reset Admin Password with Predictable Token
+
+1. In section **Reset password**, fill the fields exactly:
+
+- **Email address**
+
+```text
+operations-admin@rivan.internal
+```
+
+- **Recovery token**
+
+```text
+rivan-2048
+```
+
+- **New password**
+
+```text
+rivan-admin-lab
+```
+
+2. Click **Set new password**.
+
+What You Should See:
+- JSON response panel contains:
+
 ```json
-{"email":"operations-admin@northstar.internal","token":"northstar-2048","newPassword":"northstar-admin-lab"}
+{"status":200,"passwordChanged":true}
 ```
-- Expected: `200` + `{ "passwordChanged": true }`
 
-3) Login with updated admin password:
-- Method: `POST`
-- Endpoint: `/api/portal/api/auth/login`
-- Body:
+If token is wrong, expected response is:
+
 ```json
-{"email":"operations-admin@northstar.internal","password":"northstar-admin-lab"}
+{"status":400,"error":"Invalid or expired reset request"}
 ```
-- Expected: `200` + authenticated session cookie (`portal_session`)
 
-4) Access restricted admin function:
-- Method: `GET`
-- Endpoint: `/api/portal/api/admin`
-- Expected: `200` + admin content and flag
+## Step 5 — Sign In as Operations Admin
 
-5) Submit flag from challenge page:
-- Method: `POST`
-- Endpoint: `/api/portal/submit`
-- Body:
+1. In **Portal sign-in**, enter:
+
+- **Email address**
+
+```text
+operations-admin@rivan.internal
+```
+
+- **Password**
+
+```text
+rivan-admin-lab
+```
+
+2. Click **Sign in**.
+
+What You Should See:
+- JSON response panel contains:
+
 ```json
-{"flag":"CYBERLAB{session_security_failure}"}
+{"status":200,"authenticated":true}
 ```
-- Expected: `{ "accepted": true }`
 
-## 9. Why it works
-Recovery token generation is intentionally deterministic (`northstar-<employeeNumber>`), so it is predictable.
+## Step 6 — Open Restricted Admin Function
 
-## 10. Completion condition
-- Admin session is established
-- Correct flag is submitted
+1. Click **Open operations control room**.
 
-## 11. How to verify completion
-- Open `/challenges/authentication-session-security`
-- Evidence panel and completion state are updated
-- Refresh page: completion remains (server-side state)
+What You Should See:
+- JSON response contains:
+	- `title`: `Operations control room`
+	- `message`: `Privileged cybersecurity controls are available.`
+	- `flag`: `CYBERLAB{session_security_failure}`
 
-## 12. Resetting the challenge
-- Method: `POST`
-- Endpoint: `/api/portal/reset`
-- Expected: sessions/tokens/passwords reset to baseline
+## Step 7 — Submit the Flag in the Challenge Page
 
-## 13. Troubleshooting
-- Token rejected: ensure token is exactly `northstar-2048`.
-- Session not maintained: verify cookie acceptance in browser.
-- Admin endpoint returns `401`: login session missing.
-- Admin endpoint returns `403`: logged in as non-admin account.
-- Reset didn’t restore passwords: call `/api/portal/reset` and retry login with defaults.
+1. Go back to challenge tab:
 
-## 14. Expected behavior
-- Recovery request always returns generic acceptance.
-- Wrong token fails.
-- Correct predictable token resets password once.
+```text
+http://localhost:3005/challenges/authentication-session-security
+```
 
-## 15. Security lesson
-Recovery tokens must be high-entropy, short-lived, single-use, and non-derivable from account metadata.
+2. In the flag field (placeholder `CYBERLAB{...}`), enter:
 
-## 16. Developer notes
-- Backend route: `src/app/api/portal/[...path]/route.ts`
-- Session cookie name: `portal_session`
-- Admin flag endpoint: `/api/portal/api/admin`
+```text
+CYBERLAB{session_security_failure}
+```
+
+3. Click **Submit**.
+
+What You Should See:
+- Status message:
+
+```text
+Flag accepted. Challenge complete.
+```
+
+## Step 8 — Verify Completion
+
+Confirm all of these are true:
+
+1. Evidence panel reaches `4/4`.
+2. `Flag submitted` objective is checked.
+3. Refreshing the page keeps completion status.
+
+## How to Reset the Challenge
+
+1. On the challenge page, click **Reset lab**.
+
+What You Should See:
+- Status message:
+
+```text
+Lab reset. Start a fresh authentication investigation.
+```
+
+- Evidence resets to incomplete.
+
+After reset, the admin password returns to:
+
+```text
+rivan-operations
+```
+
+## Verified API Endpoints (Reference)
+
+- Login: `POST /api/portal/api/auth/login`
+- Recovery: `POST /api/portal/api/auth/recovery`
+- Reset password: `POST /api/portal/api/auth/reset`
+- Admin page data: `GET /api/portal/api/admin`
+- Progress: `GET /api/portal/api/progress`
+- Submit: `POST /api/portal/submit`
+- Reset challenge: `POST /api/portal/reset`
+
+## Troubleshooting
+
+### Problem: Login fails with `Invalid email or password`
+
+Fix:
+1. Re-check spelling.
+2. Ensure you reset password first.
+3. Use exactly:
+
+```text
+operations-admin@rivan.internal
+rivan-admin-lab
+```
+
+### Problem: Reset fails with `Invalid or expired reset request`
+
+Fix:
+1. Run recovery step again (click **Request**).
+2. Use token exactly:
+
+```text
+rivan-2048
+```
+
+3. Click **Set new password** again.
+
+### Problem: `Open operations control room` does not show flag
+
+Cause:
+- You are not signed in as admin session.
+
+Fix:
+1. Sign in with admin credentials from Step 5.
+2. Click **Open operations control room** again.
+
+### Problem: Challenge does not mark complete
+
+Fix:
+1. Verify submitted flag is exactly:
+
+```text
+CYBERLAB{session_security_failure}
+```
+
+2. If still not complete, click **Reset lab** and redo Steps 3–7.
+
+## Challenge Complete
+
+You are done when:
+
+- Lab status says **Flag accepted. Challenge complete.**
+- Evidence shows all four checks complete.
+- Refresh keeps completion state.
