@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
 import { ArrowUpRight, CircleDot, Network, Server } from 'lucide-react'
 import { challengeCatalog } from '@/simulator/core/engine'
 
-function DashboardCard({ id, title, difficulty, tags, status, target, service, available }: { id: string; title: string; difficulty: string; tags: string[]; status: string; target: string; service: string; available: boolean }) {
+function DashboardCard({ id, title, tags, status, target, service, available }: { id: string; title: string; tags: string[]; status: string; target: string; service: string; available: boolean }) {
   return (
     <article className="border border-slate-800 bg-slate-900/70 p-5 transition hover:border-slate-600">
       <div className="mb-4 flex items-start justify-between gap-3">
@@ -41,6 +40,8 @@ function DashboardCard({ id, title, difficulty, tags, status, target, service, a
 }
 
 export default function HomePage() {
+  const deployedServices = challengeCatalog.filter((challenge) => challenge.status === 'Available').length
+
   return (
     <main className="min-h-screen bg-[#080b12] px-5 py-8 text-slate-100 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
@@ -57,18 +58,17 @@ export default function HomePage() {
 
         <section className="mb-8 grid gap-px border border-slate-800 bg-slate-800 sm:grid-cols-3">
           <div className="bg-[#0d121b] p-4"><div className="mb-2 flex items-center gap-2 text-cyan-300"><Server size={16} /><span className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Lab network</span></div><p className="font-mono text-sm text-slate-200">10.20.0.0/16</p></div>
-          <div className="bg-[#0d121b] p-4"><p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Online services</p><p className="mt-2 font-mono text-sm text-emerald-300">1 / 5 deployed</p></div>
+          <div className="bg-[#0d121b] p-4"><p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Online services</p><p className="mt-2 font-mono text-sm text-emerald-300">{deployedServices} / {challengeCatalog.length} deployed</p></div>
           <div className="bg-[#0d121b] p-4"><p className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Operator</p><p className="mt-2 font-mono text-sm text-slate-200">analyst / authorized</p></div>
         </section>
 
-        <div className="mb-4 flex items-end justify-between gap-4"><div><p className="text-[10px] uppercase tracking-[0.2em] text-slate-500">Target environment</p><h2 className="mt-1 text-2xl font-semibold text-white">Five-stage assessment</h2></div><p className="text-right text-xs text-slate-500">Each service is independently resettable.</p></div>
+        <div className="mb-4 flex items-end justify-between gap-4"><div><p className="text-[10px] uppercase tracking-[0.2em] text-slate-500">Target environment</p><h2 className="mt-1 text-2xl font-semibold text-white">Three-stage assessment</h2></div><p className="text-right text-xs text-slate-500">Each service is independently resettable.</p></div>
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {challengeCatalog.map((challenge) => (
             <DashboardCard
               key={challenge.id}
               id={challenge.id}
               title={challenge.title}
-              difficulty={challenge.difficulty}
               tags={challenge.tags}
               status={challenge.status}
               available={challenge.status === 'Available'}

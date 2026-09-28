@@ -11,7 +11,17 @@ export default function AuthenticationSessionSecurityPage() {
   const [progress, setProgress] = useState<Progress>(blank)
   const [flag, setFlag] = useState('')
   const [message, setMessage] = useState('Open the portal and inspect the login and recovery workflow.')
-  const refresh = async () => { const response = await fetch('/api/portal/api/progress', { cache: 'no-store' }); const state = await response.json() as { authenticated?: boolean; recovery?: boolean; admin?: boolean }; setProgress((current) => ({ ...current, authenticated: Boolean(state.authenticated), recovery: Boolean(state.recovery), admin: Boolean(state.admin) })) }
+  const refresh = async () => {
+    const response = await fetch('/api/portal/api/progress', { cache: 'no-store' })
+    const state = await response.json() as { authenticated?: boolean; recovery?: boolean; admin?: boolean; submitted?: boolean }
+    setProgress((current) => ({
+      ...current,
+      authenticated: Boolean(state.authenticated),
+      recovery: Boolean(state.recovery),
+      admin: Boolean(state.admin),
+      submitted: Boolean(state.submitted),
+    }))
+  }
   useEffect(() => { void refresh(); const timer = window.setInterval(() => void refresh(), 1500); return () => window.clearInterval(timer) }, [])
   const reset = async () => { await fetch('/api/portal/reset', { method: 'POST' }); setProgress(blank); setMessage('Lab reset. Start a fresh authentication investigation.') }
   const submit = async (event: React.FormEvent) => { event.preventDefault(); const response = await fetch('/api/portal/submit', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ flag }) }); const result = await response.json() as { accepted?: boolean; error?: string }; setProgress((current) => ({ ...current, submitted: Boolean(result.accepted) })); setMessage(result.accepted ? 'Flag accepted. Challenge complete.' : result.error ?? 'Submission rejected.') }

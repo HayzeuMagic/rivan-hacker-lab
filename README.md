@@ -1,39 +1,35 @@
-# CYBERLAB
+# Northstar Logistics Cyberlab
 
-CYBERLAB is an isolated educational penetration-testing laboratory for Northstar Logistics. The platform is designed around real HTTP handlers, browser targets, API behavior, cookies, sessions, and independently resettable challenge state.
+Northstar Logistics Cyberlab is an isolated, authorized security training environment built with Next.js.
 
-## Curriculum
+## Current deployment state
 
-The current curriculum is:
+Only the following challenges are deployed and exposed:
 
-1. **Broken Access Control / IDOR** - `hr.internal.lab`
-2. **Authentication & Session Security** - `portal.internal.lab`
-3. **SSRF & Internal Service Discovery** - `scanner.internal.lab`
-4. **API Security & Mass Assignment** - `api.internal.lab`
-5. **Linux Privilege Escalation** - `10.20.40.10`
+1. **Broken Access Control / IDOR** (`hr.internal.lab`)
+2. **Authentication & Session Security** (`portal.internal.lab`)
+3. **SSRF & Internal Service Discovery** (`scanner.internal.lab`)
 
-The lab network is fictional and scoped to `10.20.0.0/16`. No requests should be sent to public websites, real organizations, or external infrastructure.
+Challenges 4 and 5 are intentionally not exposed in the user-facing dashboard.
 
-## Implemented Targets
-
-Challenge 1 currently includes a real Next.js employee-portal-style HTTP target and backend API. The target processes requests server-side, maintains an HTTP session cookie, exposes realistic status codes, and records progress from backend interactions.
-
-Challenge 2 documentation defines a separate password-reset/session-security lab. Challenges 3 through 5 are cataloged as planned services and require isolated service implementations before they should be marked available.
-
-## Development
+## Quick start
 
 ```bash
 npm install
-npm run dev
-npm run typecheck
-npm run build
+npm run dev -- -p 3005
 ```
 
-Open `http://localhost:3000` after starting the development server.
+Open `http://localhost:3005`.
+
+## Quality checks
+
+```bash
+npm run typecheck
+npm run lint
+npm run build
+npm run test:e2e
+```
 
 ## Documentation
 
-- [Challenge 1 - Broken Access Control](docs/challenge-1-broken-access-control.md)
-- [Challenge 2 - Authentication & Session Security](docs/challenge-2-authentication-session-security.md)
-
-The frontend provides the laboratory interface. Vulnerability behavior belongs in the target service boundary and must not be implemented as command recognition or frontend-only flag detection.
+See the docs hub: [docs/README.md](docs/README.md)

@@ -5,7 +5,7 @@ const accounts = new Map([
   ['analyst@northstar.internal', { password: 'northstar-analyst', role: 'employee', employeeNumber: '1001' }],
   ['operations-admin@northstar.internal', { password: 'northstar-operations', role: 'admin', employeeNumber: '2048' }],
 ])
-const sessions = new Map<string, { email: string; role: string }>()
+const sessions = new Map<string, { email: string; role: string; submitted: boolean }>()
 const resetRequests = new Map<string, { token: string; used: boolean }>()
 
 type PortalContext = { params: Promise<{ path: string[] }> }
@@ -26,7 +26,14 @@ export async function GET(request: Request, context: PortalContext) {
   const endpoint = `/${path.join('/')}`
   const { session } = getSession(request)
 
-  if (endpoint === '/api/progress') return json({ authenticated: Boolean(session), recovery: resetRequests.has('operations-admin@northstar.internal'), admin: session?.role === 'admin' })
+  if (endpoint === '/api/progress') {
+    return json({
+      authenticated: Boolean(session),
+      recovery: resetRequests.has('operations-admin@northstar.internal'),
+      admin: session?.role === 'admin',
+      submitted: Boolean(session?.submitted),
+    })
+  }
   if (endpoint === '/api/admin') {
     if (!session) return json({ error: 'authentication required' }, { status: 401 })
     if (session.role !== 'admin') return json({ error: 'insufficient privileges' }, { status: 403 })
@@ -59,7 +66,7 @@ export async function POST(request: Request, context: PortalContext) {
     const account = accounts.get(email)
     if (!account || account.password !== body.password) return json({ error: 'Invalid email or password' }, { status: 401 })
     const id = crypto.randomUUID()
-    sessions.set(id, { email, role: account.role })
+    sessions.set(id, { email, role: account.role, submitted: false })
     return json({ authenticated: true }, {}, id)
   }
   if (endpoint === '/api/auth/recovery') {
@@ -84,7 +91,11 @@ export async function POST(request: Request, context: PortalContext) {
   }
   if (endpoint === '/submit') {
     if (session?.role !== 'admin') return json({ accepted: false, error: 'Administrator session required.' }, { status: 403 })
-    return json({ accepted: body.flag === sessionSecurityFlag })
+    const accepted = body.flag === sessionSecurityFlag
+    if (accepted) {
+      session.submitted = true
+    }
+    return json({ accepted })
   }
   return json({ error: 'not found' }, { status: 404 })
 }

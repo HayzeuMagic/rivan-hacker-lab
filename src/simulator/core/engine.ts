@@ -30,24 +30,6 @@ export const challengeCatalog = [
     target: 'scanner.internal.lab',
     service: 'URL Inspection Service',
   },
-  {
-    id: 'api-mass-assignment',
-    title: 'API Security & Mass Assignment',
-    difficulty: 'Hard',
-    tags: ['REST API', 'JSON', 'Privileges'],
-    status: 'Coming Soon',
-    target: 'api.internal.lab',
-    service: 'Project Management API',
-  },
-  {
-    id: 'linux-privilege-escalation',
-    title: 'Linux Privilege Escalation',
-    difficulty: 'Hard',
-    tags: ['Linux', 'Enumeration', 'Root Access'],
-    status: 'Coming Soon',
-    target: '10.20.40.10',
-    service: 'Linux Application Server',
-  },
 ]
 
 export function resetChallengeState(): SimulatorState {
