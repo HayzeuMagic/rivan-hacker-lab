@@ -36,7 +36,7 @@ export async function POST(request: Request, context: Context) {
   if (endpoint === '/submit') {
     const body = await request.json().catch(() => ({})) as { flag?: string }
     if (!progress.retrieved) return json({ accepted: false, error: 'Retrieve the restricted response first.' }, { status: 403 }, cookie)
-    progress.submitted = body.flag?.trim() === 'CYBERLAB{ssrf_internal_network}'
+    progress.submitted = body.flag?.trim() === 'RIVAN{ssrf_internal_network}'
     return json({ accepted: progress.submitted, ...(progress.submitted ? {} : { error: 'Flag rejected.' }) }, {}, cookie)
   }
   if (endpoint !== '/api/scan') return json({ error: 'not found' }, { status: 404 }, cookie)
@@ -48,7 +48,7 @@ export async function POST(request: Request, context: Context) {
   progress.serverSide = true
   if (target.hostname !== 'internal-admin.internal.lab') return json({ error: 'destination is outside the inspection network' }, { status: 403 }, cookie)
   const localTarget = new URL(`/api/internal-admin${target.pathname}`, request.url)
-  const internalResponse = await fetch(localTarget, { headers: { 'x-cyberlab-internal': 'scanner.internal.lab' }, cache: 'no-store' })
+  const internalResponse = await fetch(localTarget, { headers: { 'x-rivan-internal': 'scanner.internal.lab' }, cache: 'no-store' })
   const result = await internalResponse.json().catch(() => ({ error: 'upstream returned invalid JSON' }))
   progress.internal = true
   if (target.pathname === '/api/status' || target.pathname === '/api/notes') progress.enumerated = true

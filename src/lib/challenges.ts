@@ -1,0 +1,133 @@
+export interface ChallengeInfo {
+  id: string
+  number: number
+  title: string
+  difficulty: string
+  tags: string[]
+  status: 'Available'
+  target: string
+  service: string
+  apiNs: string
+  summary: string
+  focus: string
+}
+
+export const challengeCatalog: ChallengeInfo[] = [
+  {
+    id: 'idor-broken-access-control',
+    number: 1,
+    title: 'Broken Access Control / IDOR',
+    difficulty: 'Medium',
+    tags: ['HTTP', 'Authorization', 'IDOR'],
+    status: 'Available',
+    target: 'hr.internal.lab',
+    service: 'Employee HR Portal',
+    apiNs: 'hr',
+    summary: 'Test whether the HR portal enforces server-side object authorization on employee records.',
+    focus: 'Access control',
+  },
+  {
+    id: 'authentication-session-security',
+    number: 2,
+    title: 'Authentication & Session Security',
+    difficulty: 'Medium',
+    tags: ['HTTP', 'Sessions', 'Recovery'],
+    status: 'Available',
+    target: 'portal.internal.lab',
+    service: 'Operations Portal',
+    apiNs: 'portal',
+    summary: 'Investigate a login and recovery workflow built around a predictable password-reset token.',
+    focus: 'Authentication attacks',
+  },
+  {
+    id: 'ssrf-internal-service-discovery',
+    number: 3,
+    title: 'SSRF & Internal Service Discovery',
+    difficulty: 'Medium - Hard',
+    tags: ['HTTP', 'SSRF', 'Network Discovery'],
+    status: 'Available',
+    target: 'scanner.internal.lab',
+    service: 'URL Inspection Service',
+    apiNs: 'scanner',
+    summary: 'Abuse a server-side URL fetcher to reach an internal operations console.',
+    focus: 'Network attacks',
+  },
+  {
+    id: 'sql-injection',
+    number: 4,
+    title: 'SQL Injection',
+    difficulty: 'Medium',
+    tags: ['SQLi', 'UNION', 'Web'],
+    status: 'Available',
+    target: 'shop.aurora.internal.lab',
+    service: 'GearTrack Product Catalog',
+    apiNs: 'aurora',
+    summary: 'Assess a database-backed product catalog, confirm SQL injection, and extract a restricted vault record.',
+    focus: 'Web attacks',
+  },
+  {
+    id: 'credential-attacks',
+    number: 5,
+    title: 'Credential Attacks',
+    difficulty: 'Medium',
+    tags: ['Hydra', 'Passwords', 'Rate Limiting'],
+    status: 'Available',
+    target: 'auth.harborpoint.internal.lab',
+    service: 'HarborPoint Secure Sign-On',
+    apiNs: 'harborpoint',
+    summary: 'Enumerate an exposed authentication service and run a controlled password attack with a lab wordlist.',
+    focus: 'Credential security',
+  },
+  {
+    id: 'network-service-exploitation',
+    number: 6,
+    title: 'Network Service Exploitation',
+    difficulty: 'Medium - Hard',
+    tags: ['Nmap', 'FTP', 'Backdoor'],
+    status: 'Available',
+    target: '10.20.30.10',
+    service: 'ats-srv01.internal.lab',
+    apiNs: 'nse',
+    summary: 'Scan a lab server, fingerprint its services, and exploit an intentionally vulnerable FTP daemon.',
+    focus: 'Vulnerability identification',
+  },
+  {
+    id: 'smb-windows-network-attack',
+    number: 7,
+    title: 'SMB / Windows Network Attack',
+    difficulty: 'Medium - Hard',
+    tags: ['SMB', 'smbclient', 'Windows'],
+    status: 'Available',
+    target: '10.20.50.20',
+    service: 'FILESRV.internal.lab',
+    apiNs: 'smb',
+    summary: 'Enumerate a misconfigured Windows file server and use exposed share data to reach a restricted share.',
+    focus: 'Network attacks',
+  },
+  {
+    id: 'linux-privilege-escalation',
+    number: 8,
+    title: 'Linux Privilege Escalation',
+    difficulty: 'Hard',
+    tags: ['Linux', 'sudo', 'SUID', 'Cron'],
+    status: 'Available',
+    target: '10.20.40.10',
+    service: 'web-srv01.internal.lab',
+    apiNs: 'privesc',
+    summary: 'Start from a low-privileged shell, enumerate local weaknesses, and escalate to root.',
+    focus: 'Privilege escalation',
+  },
+  {
+    id: 'lateral-movement',
+    number: 9,
+    title: 'Lateral Movement',
+    difficulty: 'Hard',
+    tags: ['SSH', 'Pivoting', 'Internal Network'],
+    status: 'Available',
+    target: '172.16.30.40',
+    service: 'fin-db01.internal.lab',
+    apiNs: 'pivot',
+    summary: 'Use a compromised DMZ host as a foothold to reach an internal server that is not directly routable.',
+    focus: 'Lateral movement',
+  },
+]

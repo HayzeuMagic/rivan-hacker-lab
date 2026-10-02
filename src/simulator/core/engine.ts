@@ -2,36 +2,6 @@ import { createInitialCredentialVaultState } from '@/simulator/challenges/creden
 import { createTerminalLine, evaluateObjectives } from '@/simulator/core/objectives'
 import type { CommandResult, SimHost, SimulatorState } from '@/types/simulator'
 
-export const challengeCatalog = [
-  {
-    id: 'idor-broken-access-control',
-    title: 'Broken Access Control / IDOR',
-    difficulty: 'Medium',
-    tags: ['HTTP', 'Authorization', 'IDOR'],
-    status: 'Available',
-    target: 'hr.internal.lab',
-    service: 'Employee HR Portal',
-  },
-  {
-    id: 'authentication-session-security',
-    title: 'Authentication & Session Security',
-    difficulty: 'Medium',
-    tags: ['HTTP', 'Sessions', 'Recovery'],
-    status: 'Available',
-    target: 'portal.internal.lab',
-    service: 'Operations Portal',
-  },
-  {
-    id: 'ssrf-internal-service-discovery',
-    title: 'SSRF & Internal Service Discovery',
-    difficulty: 'Medium - Hard',
-    tags: ['HTTP', 'SSRF', 'Network Discovery'],
-    status: 'Available',
-    target: 'scanner.internal.lab',
-    service: 'URL Inspection Service',
-  },
-]
-
 export function resetChallengeState(): SimulatorState {
   return createInitialCredentialVaultState()
 }
@@ -234,7 +204,7 @@ export function parseChallengeCommand(state: SimulatorState, command: string): C
       next.attackState.restrictedServerAccessed = true
       next.objectives = evaluateObjectives(next.enumeration, next.attackState, next.flagRetrieved)
       addLine('Authentication successful. Access granted.', 'success')
-      addLine(`Enumerating ${target} shares...`, 'system')
+      addLine('Enumerating 10.10.20.20 shares...', 'system')
       addLine('/finance/', 'output')
       addLine('/hr/', 'output')
       addLine('/admin/', 'output')

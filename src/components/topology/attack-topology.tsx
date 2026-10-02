@@ -19,7 +19,7 @@ export function AttackTopology({ activeNode, onSelectNode }: { activeNode: strin
   ]
 
   return (
-    <div className="relative h-72 w-full overflow-hidden rounded-xl border border-slate-700 bg-slate-950">
+    <div className="terminal-grid relative h-72 w-full overflow-hidden rounded-lg border border-border bg-card">
       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="Challenge topology">
         <defs>
           <linearGradient id="linkGlow" x1="0%" x2="100%" y1="0%" y2="0%">

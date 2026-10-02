@@ -2,52 +2,157 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------------------------------------------------------------------------
+   Rivan Hacker Lab — Design System
+   Professional cybersecurity training platform. Dark, technical, restrained.
+   Primary accent: cyan/teal. Surfaces are layered slate. Radius is consistent.
+--------------------------------------------------------------------------- */
 :root {
-  --background: 222 28% 9%;
-  --foreground: 210 40% 98%;
-  --card: 220 22% 14%;
-  --card-foreground: 210 40% 98%;
-  --muted: 220 15% 25%;
-  --muted-foreground: 215 20% 72%;
-  --primary: 174 71% 48%;
-  --primary-foreground: 222 47% 11%;
-  --border: 220 18% 18%;
-  --ring: 174 71% 48%;
-  --radius: 0.75rem;
+  --background: 222 32% 7%;
+  --foreground: 213 32% 94%;
+  --card: 221 26% 11%;
+  --card-foreground: 213 32% 94%;
+  --popover: 221 28% 10%;
+  --muted: 220 16% 22%;
+  --muted-foreground: 216 15% 62%;
+  --primary: 187 92% 60%;
+  --primary-foreground: 222 47% 8%;
+  --secondary: 220 18% 18%;
+  --secondary-foreground: 213 32% 92%;
+  --accent: 174 72% 46%;
+  --accent-foreground: 222 47% 8%;
+  --destructive: 0 72% 58%;
+  --destructive-foreground: 210 40% 98%;
+  --success: 152 68% 45%;
+  --warning: 36 92% 55%;
+  --border: 220 16% 20%;
+  --input: 220 16% 24%;
+  --ring: 187 92% 60%;
+  --radius: 0.625rem;
 }
 
 html {
   color-scheme: dark;
+  scroll-behavior: smooth;
 }
 
 body {
-  @apply bg-slate-950 text-slate-100 antialiased;
-  background-image: radial-gradient(circle at top, rgba(16, 185, 129, 0.12), transparent 35%),
-    linear-gradient(180deg, #020817 0%, #0f172a 100%);
+  @apply bg-background text-foreground antialiased;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'ss01';
+  text-rendering: optimizeLegibility;
 }
 
 * {
   box-sizing: border-box;
+  border-color: hsl(var(--border));
+}
+
+/* Visible, consistent focus state for keyboard navigation */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: hsl(var(--primary) / 0.28);
+  color: hsl(var(--foreground));
 }
 
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
-
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.8);
+  background: hsl(222 30% 9%);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: rgba(34, 197, 94, 0.4);
+  background: hsl(220 14% 26%);
   border-radius: 9999px;
+  border: 2px solid hsl(222 30% 9%);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(220 14% 34%);
 }
 
+@layer components {
+  /* ---- Surfaces ------------------------------------------------------- */
+  .lab-surface {
+    @apply rounded-lg border border-border bg-card;
+  }
+  .lab-surface-raised {
+    @apply rounded-lg border border-border bg-[hsl(221_24%_13%)];
+  }
+
+  /* ---- Heading / label kicker ---------------------------------------- */
+  .lab-kicker {
+    @apply font-mono text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500;
+  }
+
+  /* ---- Buttons -------------------------------------------------------- */
+  .btn {
+    @apply inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-150 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50;
+    height: 2.5rem;
+    padding-inline: 1rem;
+  }
+  .btn-sm {
+    height: 2.125rem;
+    padding-inline: 0.75rem;
+    @apply text-[13px];
+  }
+  .btn-primary {
+    @apply btn bg-primary text-primary-foreground shadow-sm hover:bg-[hsl(187_92%_54%)] active:bg-[hsl(187_92%_48%)];
+  }
+  .btn-secondary {
+    @apply btn border border-border bg-secondary text-secondary-foreground hover:border-slate-500 hover:bg-[hsl(220_18%_22%)];
+  }
+  .btn-ghost {
+    @apply btn border border-transparent text-slate-300 hover:border-border hover:bg-secondary/60;
+  }
+  .btn-destructive {
+    @apply btn bg-destructive text-destructive-foreground hover:bg-[hsl(0_72%_52%)];
+  }
+
+  /* ---- Form controls -------------------------------------------------- */
+  .field {
+    @apply block w-full rounded-md border border-input bg-[hsl(222_30%_9%)] text-sm text-foreground shadow-sm transition-colors duration-150;
+    height: 2.5rem;
+    padding-inline: 0.75rem;
+  }
+  .field::placeholder {
+    @apply text-slate-500;
+  }
+  .field:hover {
+    @apply border-slate-500;
+  }
+  .field:focus {
+    @apply border-primary outline-none ring-2 ring-primary/30;
+  }
+  .field:disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+  .field-label {
+    @apply mb-1.5 block text-[13px] font-medium text-slate-300;
+  }
+
+  /* ---- Badges / chips ------------------------------------------------- */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded border border-border bg-secondary/60 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-300;
+  }
+}
+
+/* Subtle grid backdrop for technical surfaces (terminals, topology) */
 .terminal-grid {
-  background-image: linear-gradient(rgba(15, 118, 110, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 118, 110, 0.05) 1px, transparent 1px);
-  background-size: 18px 18px;
+  background-image: linear-gradient(rgba(34, 211, 238, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.045) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* App-shell ambient background */
+.lab-ambient {
+  background-image:
+    radial-gradient(60rem 30rem at 50% -10%, hsl(var(--primary) / 0.07), transparent 60%),
+    linear-gradient(180deg, hsl(222 36% 7%) 0%, hsl(222 32% 8%) 100%);
 }
 
 .lab-input-dark {

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-const sessionSecurityFlag = 'CYBERLAB{session_security_failure}'
+const sessionSecurityFlag = 'RIVAN{session_security_failure}'
 const accounts = new Map([
   ['analyst@rivan.internal', { password: 'rivan-analyst', role: 'employee', employeeNumber: '1001' }],
   ['operations-admin@rivan.internal', { password: 'rivan-operations', role: 'admin', employeeNumber: '2048' }],

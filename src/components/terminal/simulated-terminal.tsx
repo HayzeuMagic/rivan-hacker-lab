@@ -44,10 +44,10 @@ export function SimulatedTerminal({ lines, prompt, onSubmit, label = 'KALI-LAB' 
   }
 
   return (
-    <div className="flex h-[420px] flex-col overflow-hidden rounded-xl border border-slate-700 bg-slate-950 text-sm text-emerald-300">
-      <div className="flex items-center justify-between border-b border-slate-700 bg-slate-900 px-4 py-2 text-xs uppercase tracking-[0.2em] text-slate-400">
+    <div className="flex h-[420px] flex-col overflow-hidden rounded-lg border border-border bg-[#0a0e14] text-sm text-emerald-300 shadow-lg">
+      <div className="flex items-center justify-between border-b border-border bg-slate-900 px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
         <span>Simulated Terminal</span>
-        <span>{label}</span>
+        <span className="font-mono normal-case tracking-normal text-slate-500">{label}</span>
       </div>
       <div className="terminal-grid flex-1 space-y-2 overflow-auto p-4 font-mono">
         {lines.map((line) => (
@@ -72,7 +72,7 @@ export function SimulatedTerminal({ lines, prompt, onSubmit, label = 'KALI-LAB' 
         ))}
       </div>
       <form
-        className="flex items-center gap-2 border-t border-slate-700 bg-slate-900 p-3"
+        className="flex items-center gap-2 border-t border-border bg-slate-900 p-3"
         onSubmit={(event) => {
           event.preventDefault()
           submitCommand()

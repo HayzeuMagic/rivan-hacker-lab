@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-const flag = 'CYBERLAB{idor_broken_access_control}'
+const flag = 'RIVAN{idor_broken_access_control}'
 const sessions = new Map<string, { login: boolean; resource: boolean; unauthorized: boolean; submitted: boolean }>()
 type Context = { params: Promise<{ path: string[] }> }
 function getSession(request: Request) { const cookie = request.headers.get('cookie')?.match(/hr_session=([^;]+)/)?.[1] ?? crypto.randomUUID(); const progress = sessions.get(cookie) ?? { login: false, resource: false, unauthorized: false, submitted: false }; sessions.set(cookie, progress); return { cookie, progress } }
