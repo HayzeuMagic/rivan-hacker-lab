@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 
-import { challengeCatalog } from '../../src/simulator/core/engine'
+import { challengeCatalog } from '../../src/lib/challenges'
 import { GET as hrGet, POST as hrPost } from '../../src/app/api/hr/[...path]/route'
 import { GET as portalGet, POST as portalPost } from '../../src/app/api/portal/[...path]/route'
 import { GET as scannerGet, POST as scannerPost } from '../../src/app/api/scanner/[...path]/route'
@@ -69,11 +69,21 @@ async function callRoute(
   return { status: response.status, json }
 }
 
-test('challenge catalog only exposes three deployed challenges', () => {
-  assert.equal(challengeCatalog.length, 3)
+test('challenge catalog exposes all nine deployed challenges', () => {
+  assert.equal(challengeCatalog.length, 9)
   assert.deepEqual(
     challengeCatalog.map((c) => c.id),
-    ['idor-broken-access-control', 'authentication-session-security', 'ssrf-internal-service-discovery'],
+    [
+      'idor-broken-access-control',
+      'authentication-session-security',
+      'ssrf-internal-service-discovery',
+      'sql-injection',
+      'credential-attacks',
+      'network-service-exploitation',
+      'smb-windows-network-attack',
+      'linux-privilege-escalation',
+      'lateral-movement',
+    ],
   )
 })
 
@@ -103,7 +113,7 @@ test('challenge 1 API workflow, completion, reset', async () => {
     path: ['submit'],
     method: 'POST',
     jar,
-    body: { flag: 'CYBERLAB{idor_broken_access_control}' },
+    body: { flag: 'RIVAN{idor_broken_access_control}' },
     url: 'http://localhost/api/hr/submit',
   })
   assert.equal(res.status, 200)
@@ -156,7 +166,7 @@ test('challenge 2 API workflow with predictable recovery token and persisted sub
     path: ['submit'],
     method: 'POST',
     jar,
-    body: { flag: 'CYBERLAB{session_security_failure}' },
+    body: { flag: 'RIVAN{session_security_failure}' },
     url: 'http://localhost/api/portal/submit',
   })
   assert.equal((res.json as { accepted: boolean }).accepted, true)
@@ -205,13 +215,13 @@ test('challenge 3 API workflow, validation, internal discovery, completion', asy
       url: 'http://localhost/api/scanner/api/scan',
     })
     assert.equal(res.status, 200)
-    assert.equal((res.json as { response: { flag: string } }).response.flag, 'CYBERLAB{ssrf_internal_network}')
+    assert.equal((res.json as { response: { flag: string } }).response.flag, 'RIVAN{ssrf_internal_network}')
 
     res = await callRoute(scannerPost, {
       path: ['submit'],
       method: 'POST',
       jar,
-      body: { flag: 'CYBERLAB{ssrf_internal_network}' },
+      body: { flag: 'RIVAN{ssrf_internal_network}' },
       url: 'http://localhost/api/scanner/submit',
     })
     assert.equal((res.json as { accepted: boolean }).accepted, true)
